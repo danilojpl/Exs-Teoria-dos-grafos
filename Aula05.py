@@ -1,5 +1,6 @@
   
 import numpy as np
+from collections import defaultdict
 
 
 class Grafo:
@@ -54,15 +55,7 @@ class Grafo:
 
 
   def subgrafo_gerador(self, g1):
-    if((len(self.g)-1)*(len(self.g[0])-1) == (len(g1)-1)*(len(g1[0])-1)):
-      for l in range(1, len(g1)):
-        for c in range (1, len(g1[0])):
-          if(g1[l][c] != self.g[l][c]):
-            if(g1[l][c] != 0):
-              return False
-    else:
-      return False
-    return True
+    pass
   
   
   def induzido(self, v_l):
@@ -110,6 +103,65 @@ class Grafo:
        return False
      else:
        return True
+  
+  # ex kosaraju 
+class Grafo2:
+  
+    def __init__(self,vertices):
+        self.V= vertices 
+        self.grafo = defaultdict(list) 
+  
+    def addAresta(self,u,v):
+        self.grafo[u].append(v)
+  
+    def DFSUtil(self,v,visitado):
+
+        visitado[v]= True
+        print(v),
+
+        for i in self.grafo[v]:
+            if visitado[i]==False:
+                self.DFSUtil(i,visitado)
+ 
+ 
+    def fillOrder(self,v,visited, stack):
+
+        visited[v]= True
+
+        for i in self.grafo[v]:
+            if visited[i]==False:
+                self.fillOrder(i, visited, stack)
+        stack = stack.append(v)
+     
+    def transposto(self):
+        g = Grafo2(self.V)
+ 
+        for i in self.grafo:
+            for j in self.grafo[i]:
+                g.addAresta(j,i)
+        return g
+ 
+  
+
+    def printSCCs(self):
+         
+        stack = []
+
+        visitado =[False]*(self.V)
+
+        for i in range(self.V):
+            if visitado[i]==False:
+                self.fillOrder(i, visitado, stack)
+ 
+        gr = self.transposto()
+          
+        visited =[False]*(self.V)
+
+        while stack:
+            i = stack.pop()
+            if visited[i]==False:
+                gr.DFSUtil(i, visited)
+                print("") 
 
 
 arestas = ((1,2),(2,3), (2,4),(2,5), (4,5))
@@ -127,10 +179,10 @@ graph_g1 = Grafo(num_v2+1)
 graph_g1.set_grafo(arestas_g1)
 print("Subgrafo:",graph.subgrafo(graph_g1.g))
 
-#ex 03
-print("\n")
-print("--------ex 03--------")
-print("Subgrafo gerador:",graph.subgrafo_gerador(graph_g1.g))
+#ex 03 --TODO
+# print("\n")
+# print("--------ex 03--------")
+# print("Subgrafo gerador:",graph.subgrafo_gerador(graph_g1.g))
 
 
 #ex 04
@@ -154,3 +206,23 @@ print("\n")
 print("--------ex 06--------")
 print("O grafo é conexo?",graph3.conexo())
 
+
+#ex 07
+print("\n")
+print("--------ex 07 kosaraju--------")
+g = Grafo2(8)
+g.addAresta(0, 4)
+g.addAresta(4, 1)
+g.addAresta(1, 0)
+g.addAresta(5, 1)
+g.addAresta(5, 4)
+g.addAresta(5, 6)
+g.addAresta(6, 5)
+g.addAresta(6, 2)
+g.addAresta(2, 1)
+g.addAresta(2, 3)
+g.addAresta(3, 2)
+g.addAresta(7, 3)
+g.addAresta(7, 6)
+
+g.printSCCs()
